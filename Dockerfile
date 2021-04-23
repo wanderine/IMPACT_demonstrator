@@ -20,12 +20,12 @@ RUN cd /home && \
 # Add Anaconda to path
 ENV PATH=/root/anaconda/bin:$PATH
 
-# Create nnUNet conda environment
-COPY nnUNetDicom.yaml /home
-RUN conda env create -f /home/nnUNetDicom.yaml
+# Create keras conda environment
+COPY kerasdicom.yml /home
+RUN conda env create -f /home/kerasdicom.yml
 
-# Add nnUNEt environment to path
-ENV PATH=/root/anaconda/envs/nnUNetDicom/bin:$PATH
+# Add conda environment to path
+ENV PATH=/root/anaconda/envs/kerasdicom/bin:$PATH
 
 # Create folders for input and output data
 RUN mkdir /{in,out,nifti_in,nifti_out}
@@ -36,6 +36,11 @@ COPY predict.py /home
 COPY post_process_segmentation.py /home
 COPY convert_to_nifti.py /home
 COPY convert_to_RTSTRUCT.py /home
+
+COPY myWeights_weight60000_depth4_nfilter16_CV3_BRATS_augmented_defaced.h5 /home
+COPY myWeights_weight60000_depth4_nfilter16_CV3_BRATS_qMRIGD_augmented_defaced.h5 /home
+COPY myWeights_weight60000_depth4_nfilter16_CV3_BRATS_qMRI_qMRIGD_augmented_defaced.h5 /home
+
 RUN chmod +x /home/pipeline.sh
 
 ENTRYPOINT ["/home/pipeline.sh"]
