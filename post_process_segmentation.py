@@ -2,6 +2,7 @@ import argparse
 
 import SimpleITK as sitk
 
+import numpy as np
 
 def get_parser():
     """
@@ -45,10 +46,13 @@ def filter_largest_component(binary_input_label_image: sitk.Image):
 
 def post_process(input_label_image_path: str, output_label_image_path: str):
     input_image = sitk.ReadImage(input_label_image_path)
+    input_image = sitk.Cast(input_image, sitk.sitkFloat32)
 
+    
     # Create binary mask of the foreground and select largest component.
     input_mask = sitk.BinaryThreshold(input_image, 1, 100)
     largest_component_mask = filter_largest_component(input_mask)
+    largest_component_mask = sitk.Cast(largest_component_mask, sitk.sitkFloat32)
 
     # Multiply largest component with input image to obtain the original labels and write to disk.
     result = largest_component_mask * input_image
@@ -57,6 +61,5 @@ def post_process(input_label_image_path: str, output_label_image_path: str):
 
 if __name__ == "__main__":
     p = get_parser()
-
     post_process(p.input_image, p.output_image)
 

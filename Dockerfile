@@ -30,12 +30,13 @@ ENV PATH=/root/anaconda/envs/kerasdicom/bin:$PATH
 # Create folders for input and output data
 RUN mkdir /{in,out,nifti_in,nifti_out}
 
-# Copy script for running segmentation
+# Copy scripts for running segmentation
 COPY pipeline.sh /home
 COPY predict.py /home
 COPY post_process_segmentation.py /home
 COPY convert_to_nifti.py /home
 COPY convert_to_RTSTRUCT.py /home
+COPY utilities.py /home
 
 COPY myWeights_weight60000_depth4_nfilter16_CV3_BRATS_augmented_defaced.h5 /home
 COPY myWeights_weight60000_depth4_nfilter16_CV3_BRATS_qMRIGD_augmented_defaced.h5 /home

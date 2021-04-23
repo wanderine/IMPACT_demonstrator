@@ -188,9 +188,9 @@ def segment(input_path: str, output_segmentation: str):
     mymax_qMRIT2_GD = 3070.6 / 2.0
     mymax_qMRIPD_GD = 189.07 / 2.0
 
-    anatomical = nib.load(input_path + "/T1GD/T1GD.nii.gz")
-    new_header = anatomical.header.copy()
-       
+    anatomical = nib.load(input_path + "/T1GD/9_t1w_gd.nii.gz")
+    new_header = anatomical.header.copy() 
+    
     # Check number of folders
     folders = 0
     for _, dirnames, filenames in os.walk(input_path):
@@ -199,7 +199,7 @@ def segment(input_path: str, output_segmentation: str):
 
     if folders == 1:    
         testImages = load_data(data_directory=input_path + "/T1GD/", nr_to_load=1, maxintensity=mymax_T1GD)
-        modelName = 'myWeights_weight60000_depth4_nfilter16_CV3_BRATS_augmented_defaced.h5'
+        modelName = '/home/myWeights_weight60000_depth4_nfilter16_CV3_BRATS_augmented_defaced.h5'
         print("Only using T1GD")
     elif folders == 4:
         images1 = load_data(data_directory=input_path + "/T1GD/", nr_to_load=1, maxintensity=mymax_T1GD)
@@ -207,7 +207,7 @@ def segment(input_path: str, output_segmentation: str):
         images3 = load_data(data_directory=input_path + "/qMRIT2GD/", nr_to_load=1, maxintensity=mymax_qMRIT2_GD)
         images4 = load_data(data_directory=input_path + "/qMRIPDGD/", nr_to_load=1, maxintensity=mymax_qMRIPD_GD)
         testImages = np.concatenate((images1,images2,images3,images4),axis=3)
-        modelName = 'myWeights_weight60000_depth4_nfilter16_CV3_BRATS_qMRIGD_augmented_defaced.h5'
+        modelName = '/home/myWeights_weight60000_depth4_nfilter16_CV3_BRATS_qMRIGD_augmented_defaced.h5'
         print("Using T1GD and qMRI GD")
     elif folders == 7:
         images1 = load_data(data_directory=input_path + "/T1GD/", nr_to_load=1, maxintensity=mymax_T1GD)
@@ -218,7 +218,7 @@ def segment(input_path: str, output_segmentation: str):
         images6 = load_data(data_directory=input_path + "/qMRIT2GD/", nr_to_load=1, maxintensity=mymax_qMRIT2_GD)
         images7 = load_data(data_directory=input_path + "/qMRIPDGD/", nr_to_load=1, maxintensity=mymax_qMRIPD_GD)
         testImages = np.concatenate((images1,images2,images3,images4,images5,images6,images7),axis=3)
-        modelName = 'myWeights_weight60000_depth4_nfilter16_CV3_BRATS_qMRI_qMRIGD_augmented_defaced.h5'
+        modelName = '/home/myWeights_weight60000_depth4_nfilter16_CV3_BRATS_qMRI_qMRIGD_augmented_defaced.h5'
         print("Using T1GD and qMRI and qMRI GD")
 
     print(testImages.shape)     
@@ -234,7 +234,9 @@ def segment(input_path: str, output_segmentation: str):
     segmentation = net_aug.predict(testImages)
     segmentation = segmentation.transpose(1,2,0,3)
     segmentation = np.argmax(segmentation, axis=-1)
+    segmentation = segmentation.astype(np.float32)
     img = nib.Nifti1Image(segmentation, None, header=new_header)
+    img.set_data_dtype(np.float32)
     nib.save(img, output_segmentation) 
         
 
