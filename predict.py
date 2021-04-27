@@ -9,6 +9,7 @@ import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import to_categorical
 from utilities import load_data
+from utilities import load_data_autoscale
 
 import nibabel as nib 
 
@@ -188,7 +189,7 @@ def segment(input_path: str, output_segmentation: str):
     mymax_qMRIT2_GD = 3070.6 / 2.0
     mymax_qMRIPD_GD = 189.07 / 2.0
 
-    anatomical = nib.load(input_path + "/T1GD/9_t1w_gd.nii.gz")
+    anatomical = nib.load(input_path + "/T1GD/volume.nii") # 9_t1w_gd.nii.gz")
     new_header = anatomical.header.copy() 
     
     # Check number of folders
@@ -198,11 +199,11 @@ def segment(input_path: str, output_segmentation: str):
         folders += len(dirnames)
 
     if folders == 1:    
-        testImages = load_data(data_directory=input_path + "/T1GD/", nr_to_load=1, maxintensity=mymax_T1GD)
+        testImages = load_data_autoscale(data_directory=input_path + "/T1GD/", nr_to_load=1, maxintensity=mymax_T1GD) 
         modelName = '/home/myWeights_weight60000_depth4_nfilter16_CV3_BRATS_augmented_defaced.h5'
         print("Only using T1GD")
     elif folders == 4:
-        images1 = load_data(data_directory=input_path + "/T1GD/", nr_to_load=1, maxintensity=mymax_T1GD)
+        images1 = load_data_autoscale(data_directory=input_path + "/T1GD/", nr_to_load=1, maxintensity=mymax_T1GD)
         images2 = load_data(data_directory=input_path + "/qMRIT1GD/", nr_to_load=1, maxintensity=mymax_qMRIT1_GD)
         images3 = load_data(data_directory=input_path + "/qMRIT2GD/", nr_to_load=1, maxintensity=mymax_qMRIT2_GD)
         images4 = load_data(data_directory=input_path + "/qMRIPDGD/", nr_to_load=1, maxintensity=mymax_qMRIPD_GD)
@@ -210,7 +211,7 @@ def segment(input_path: str, output_segmentation: str):
         modelName = '/home/myWeights_weight60000_depth4_nfilter16_CV3_BRATS_qMRIGD_augmented_defaced.h5'
         print("Using T1GD and qMRI GD")
     elif folders == 7:
-        images1 = load_data(data_directory=input_path + "/T1GD/", nr_to_load=1, maxintensity=mymax_T1GD)
+        images1 = load_data_autoscale(data_directory=input_path + "/T1GD/", nr_to_load=1, maxintensity=mymax_T1GD)
         images2 = load_data(data_directory=input_path + "/qMRIT1/", nr_to_load=1, maxintensity=mymax_qMRIT1)
         images3 = load_data(data_directory=input_path + "/qMRIT2/", nr_to_load=1, maxintensity=mymax_qMRIT2)
         images4 = load_data(data_directory=input_path + "/qMRIPD/", nr_to_load=1, maxintensity=mymax_qMRIPD)
@@ -235,10 +236,12 @@ def segment(input_path: str, output_segmentation: str):
     segmentation = segmentation.transpose(1,2,0,3)
     segmentation = np.argmax(segmentation, axis=-1)
     segmentation = segmentation.astype(np.float32)
+    segmentation[segmentation < 0.5] = 0
+    segmentation[segmentation >= 0.5] = 1
     img = nib.Nifti1Image(segmentation, None, header=new_header)
     img.set_data_dtype(np.float32)
     nib.save(img, output_segmentation) 
-        
+    
 
 def get_parser():
     """

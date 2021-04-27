@@ -81,7 +81,7 @@ def load_3D_data(data_directory='', nr_to_load=0, load_dimension = None, load_vi
     # volume file names
     # the glob.glob function returns a list of names that match the pathname
     # given as input
-    volume_names = glob.glob(os.path.join(data_directory,'*.nii.gz'))
+    volume_names = glob.glob(os.path.join(data_directory,'*.nii'))
     # now just take the file names (interesting that for loops can be done
     # inside functions)
     volume_names = [os.path.basename(x) for x in volume_names]
@@ -113,8 +113,26 @@ def load_3D_data(data_directory='', nr_to_load=0, load_dimension = None, load_vi
     return {"volume_size": volume_size,
             "nr_of_channels": nr_of_channels,
             "header": header_test,
+
             "data_volumes": data_volumes,
             "volume_names": volume_names}
+
+
+def load_data_autoscale(data_directory='', nr_to_load=0, maxintensity=1):
+
+    image_archive = load_3D_data(data_directory, nr_to_load)
+    images = image_archive['data_volumes'][:, :, :, :, :]
+    images = images.transpose(0,3,1,2,4)
+    images = images.reshape(images.shape[0]*images.shape[1], images.shape[2], images.shape[3], images.shape[4])
+    images = images.astype('float32')
+
+    images = images + 32768.0
+    images[np.nonzero(images == 32768.0)] = 0
+    
+    mymax = np.max(images) / 2.0
+    images = images / mymax - 1.0
+    
+    return images
 
 
 def load_data(data_directory='', nr_to_load=0, maxintensity=1):
@@ -125,8 +143,9 @@ def load_data(data_directory='', nr_to_load=0, maxintensity=1):
     images = images.reshape(images.shape[0]*images.shape[1], images.shape[2], images.shape[3], images.shape[4])
     images = images.astype('float32')
     images = images / maxintensity - 1
-    
+
     return images
+
 
 
 def load_T1GDT1T2FLAIRT2(data_directory='', nr_to_load=0):
@@ -165,7 +184,7 @@ def load_ADC(data_directory='', nr_to_load=0):
     images = ADC_image_archive['data_volumes'][:, :, :, :, :]
     images = images.transpose(0,3,1,2,4)
     images = images.reshape(images.shape[0]*images.shape[1], images.shape[2], images.shape[3], images.shape[4])
-
+    
     mymax = np.max(images) / 2.0
     images = images.astype('float32')
     images = images / mymax - 1
@@ -675,6 +694,7 @@ if __name__ == '__main__': # which functions I can use from this file
     zca_white()
     load_3D_data()
     load_data()
+    load_data_autoscale()
     load_T1GDT1T2FLAIRT2()
     load_qMRI()
     load_qMRI_GD()

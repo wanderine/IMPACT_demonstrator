@@ -38,6 +38,8 @@ COPY convert_to_nifti.py /home
 COPY convert_to_RTSTRUCT.py /home
 COPY utilities.py /home
 
+COPY dcm2niix_afni /home
+
 COPY myWeights_weight60000_depth4_nfilter16_CV3_BRATS_augmented_defaced.h5 /home
 COPY myWeights_weight60000_depth4_nfilter16_CV3_BRATS_qMRIGD_augmented_defaced.h5 /home
 COPY myWeights_weight60000_depth4_nfilter16_CV3_BRATS_qMRI_qMRIGD_augmented_defaced.h5 /home

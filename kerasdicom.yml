@@ -1,7 +1,6 @@
 name: kerasdicom
 channels:
   - conda-forge
-  - r
   - defaults
 dependencies:
   - _libgcc_mutex=0.1=main
@@ -15,9 +14,9 @@ dependencies:
   - brunsli=0.1=h2531618_0
   - bzip2=1.0.8=h7b6447c_0
   - c-ares=1.15.0=h7b6447c_1001
-  - ca-certificates=2021.4.13=h06a4308_1
+  - ca-certificates=2020.12.5=ha878542_0
   - cachetools=3.1.1=py_0
-  - certifi=2020.12.5=py37h06a4308_0
+  - certifi=2020.12.5=py37h89c1867_1
   - cffi=1.14.0=py37he30daa8_1
   - chardet=3.0.4=py37_1003
   - charls=2.2.0=h2531618_0
@@ -25,6 +24,7 @@ dependencies:
   - cloudpickle=1.6.0=py_0
   - cryptography=2.9.2=py37h1ba5d50_0
   - cudatoolkit=10.1.243=h6bb024c_0
+  - cudatoolkit-dev=10.1.243=h516909a_3
   - cudnn=7.6.5=cuda10.1_0
   - cupti=10.1.168=0
   - cycler=0.10.0=py37_0
@@ -95,7 +95,7 @@ dependencies:
   - oauthlib=3.1.0=py_0
   - olefile=0.46=py37_0
   - openjpeg=2.3.0=h05c96fa_1
-  - openssl=1.1.1k=h27cfd23_0
+  - openssl=1.1.1h=h516909a_0
   - opt_einsum=3.1.0=py_0
   - packaging=20.4=pyh9f0ad1d_0
   - partd=1.2.0=pyhd3eb1b0_0
