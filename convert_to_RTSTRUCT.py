@@ -87,6 +87,9 @@ def convert(input_nifti_path: str, input_dicom_path: str, output_dicom_path: str
 
         image = volume[:,:,slice] 
         
+	# Flip slice left right, because GammaPlan...
+        image = np.fliplr(image) 
+
         # Get contours in this slice using scikit-image
         contours = measure.find_contours(image, 0.5)
         
