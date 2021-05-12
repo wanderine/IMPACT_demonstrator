@@ -36,6 +36,7 @@ COPY predict.py /home
 COPY post_process_segmentation.py /home
 COPY convert_to_nifti.py /home
 COPY convert_to_RTSTRUCT.py /home
+COPY read_RTSS.py /home
 COPY utilities.py /home
 
 COPY dcm2niix_afni /home
