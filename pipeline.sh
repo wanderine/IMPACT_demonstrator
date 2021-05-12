@@ -24,6 +24,7 @@ python /home/post_process_segmentation.py /nifti_out/segmentation.nii.gz /nifti_
 # Convert nifti segmentation to DICOM RTSTRUCT
 echo "Converting segmentation to RTSTRUCT"
 python /home/convert_to_RTSTRUCT.py /nifti_out/segmentation_postp.nii.gz /in/T1GD /out
+python /home/read_RTSS.py -in /out/segmentationRTSTRUCT.dcm --out /out/RTSS_info.json
 
 # copy nifti output to output directory
 cp /nifti_out/segmentation* /out 
